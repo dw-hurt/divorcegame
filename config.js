@@ -9,6 +9,18 @@ const CONFIG = {
     GAME_VERSION: '1.1.0',
     GAME_NAME: 'Divorce Quest - Enhanced Edition',
     
+    // Screen IDs
+    SCREENS: {
+        DISCLAIMER: 'disclaimer-screen',
+        MENU: 'menu-screen',
+        CHARACTER: 'character-screen',
+        GAME: 'game-screen',
+        RESULTS: 'results-screen',
+        LOAD: 'load-screen',
+        CONTENT_MANAGER: 'content-manager-screen',
+        DOCUMENTS: 'documents-screen'
+    },
+    
     // Timing Settings (in milliseconds)
     IDLE_WARNING_TIME: 4 * 60 * 1000,  // 4 minutes
     IDLE_TIMEOUT: 5 * 60 * 1000,        // 5 minutes total
@@ -232,6 +244,7 @@ const CONFIG = {
 
 // Freeze configuration to prevent accidental modifications
 Object.freeze(CONFIG);
+Object.freeze(CONFIG.SCREENS);
 Object.freeze(CONFIG.STORAGE_KEYS);
 Object.freeze(CONFIG.API);
 Object.freeze(CONFIG.PROPERTY_STATES);
