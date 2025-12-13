@@ -1,0 +1,214 @@
+================================================================================
+DIVORCE QUEST - DEPLOYMENT INSTRUCTIONS
+Repository: https://github.com/dw-hurt/divorcegame
+================================================================================
+
+QUICK DEPLOY (RECOMMENDED - 5 MINUTES)
+================================================================================
+
+1. DOWNLOAD FILES
+   - Download all 27 files from this project
+   - Keep the folder structure (css/ and js/ folders)
+   - Save to: C:\divorcegame (or your preferred location)
+
+2. INSTALL GIT (if not already installed)
+   - Download: https://git-scm.com/download/win
+   - Install with default settings
+   - Restart PowerShell after installation
+
+3. RUN DEPLOYMENT SCRIPT
+   - Open PowerShell in your divorcegame folder
+   - Run: .\DEPLOY_NOW.ps1
+   
+   If you get an error about execution policy:
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   
+   Then run: .\DEPLOY_NOW.ps1 again
+
+4. AUTHENTICATE WITH GITHUB
+   When prompted for credentials:
+   - Username: dw-hurt
+   - Password: Use a Personal Access Token (NOT your GitHub password!)
+   
+   Get Personal Access Token:
+   a. Go to: https://github.com/settings/tokens
+   b. Click "Generate new token" → "Classic"
+   c. Name: Divorce Quest Deployment
+   d. Select scope: ✓ repo (check all under repo)
+   e. Click "Generate token"
+   f. COPY THE TOKEN (you won't see it again!)
+   g. Paste as password when PowerShell asks
+
+5. ENABLE GITHUB PAGES
+   After successful push:
+   a. Go to: https://github.com/dw-hurt/divorcegame
+   b. Click "Settings" (top menu)
+   c. Click "Pages" (left sidebar)
+   d. Source: Select "main" branch
+   e. Folder: Select "/ (root)"
+   f. Click "Save"
+   g. Wait 1-2 minutes
+   h. Your game will be live at: https://dw-hurt.github.io/divorcegame/
+
+================================================================================
+FILES TO DOWNLOAD (27 FILES TOTAL)
+================================================================================
+
+ROOT DIRECTORY (15 files):
+✓ index.html
+✓ seed-sample-data.html
+✓ deploy-to-github.ps1         (full deployment script)
+✓ DEPLOY_NOW.ps1               (quick deployment script - USE THIS!)
+✓ README.md
+✓ GITHUB_NOTES.md
+✓ QUICKSTART.md
+✓ CONTRIBUTING.md
+✓ PROJECT_SUMMARY.md
+✓ DEPLOYMENT_INSTRUCTIONS.md
+✓ QUICK_REFERENCE.md
+✓ START_HERE.md
+✓ FILE_CHECKLIST.txt
+✓ LICENSE
+✓ .gitignore
+
+CSS FOLDER (1 file):
+Create folder: css/
+✓ css/style.css
+
+JS FOLDER (11 files):
+Create folder: js/
+✓ js/config.js
+✓ js/utils.js
+✓ js/api.js
+✓ js/bayesian.js
+✓ js/questionnaire.js
+✓ js/scenarios.js
+✓ js/outcomes.js
+✓ js/content-manager.js
+✓ js/idle-manager.js
+✓ js/game-engine.js
+✓ js/main.js
+
+================================================================================
+FOLDER STRUCTURE
+================================================================================
+
+C:\divorcegame\
+├── index.html
+├── DEPLOY_NOW.ps1             ← RUN THIS TO DEPLOY!
+├── (all other .md and .html files)
+├── css\
+│   └── style.css
+└── js\
+    └── (all 11 .js files)
+
+================================================================================
+POWERSHELL COMMANDS (IF MANUAL DEPLOYMENT NEEDED)
+================================================================================
+
+# Navigate to folder
+cd C:\divorcegame
+
+# Initialize Git
+git init
+git config user.name "Your Name"
+git config user.email "your@email.com"
+
+# Add files
+git add .
+
+# Commit
+git commit -m "Initial commit - Divorce Quest v1.0.0"
+
+# Add remote (already configured for your repo)
+git remote add origin https://github.com/dw-hurt/divorcegame.git
+
+# Create main branch
+git branch -M main
+
+# Push to GitHub
+git push -u origin main
+
+# You'll be prompted for:
+# Username: dw-hurt
+# Password: Your Personal Access Token
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+PROBLEM: "git is not recognized"
+SOLUTION: Install Git from https://git-scm.com/download/win
+          Restart PowerShell after installation
+
+PROBLEM: "Cannot run script" or "Execution policy" error
+SOLUTION: Run this command first:
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+PROBLEM: "Permission denied" or authentication fails
+SOLUTION: Use Personal Access Token, not GitHub password
+          Generate at: https://github.com/settings/tokens
+          Token needs "repo" scope (all permissions under repo)
+
+PROBLEM: "Repository not found"
+SOLUTION: Make sure the repository exists at:
+          https://github.com/dw-hurt/divorcegame
+          If not, create it on GitHub first
+
+PROBLEM: GitHub Pages shows 404
+SOLUTION: Wait 1-2 minutes after enabling Pages
+          Verify Settings → Pages shows "Your site is live at..."
+          Check that branch is "main" and folder is "/ (root)"
+
+PROBLEM: Game loads but doesn't work
+SOLUTION: Press F12 in browser to check console for errors
+          Verify all files were uploaded (check on GitHub)
+          Make sure folder structure is correct (css/ and js/ exist)
+
+================================================================================
+VERIFICATION CHECKLIST
+================================================================================
+
+After deployment, verify:
+☐ Repository visible at: https://github.com/dw-hurt/divorcegame
+☐ All files are present on GitHub (check file list)
+☐ README.md displays on repository page
+☐ GitHub Pages enabled in Settings → Pages
+☐ Game loads at: https://dw-hurt.github.io/divorcegame/
+☐ Can create character and play through questions
+☐ No console errors (press F12 in browser)
+
+================================================================================
+QUICK REFERENCE
+================================================================================
+
+Your Repository:  https://github.com/dw-hurt/divorcegame
+Your Live Game:   https://dw-hurt.github.io/divorcegame/
+Settings Page:    https://github.com/dw-hurt/divorcegame/settings/pages
+Generate Token:   https://github.com/settings/tokens
+
+Deploy Script:    .\DEPLOY_NOW.ps1
+Test Locally:     Open index.html in browser
+
+================================================================================
+NEED HELP?
+================================================================================
+
+1. Read START_HERE.md for detailed step-by-step guide
+2. Read DEPLOYMENT_INSTRUCTIONS.md for comprehensive instructions
+3. Read QUICK_REFERENCE.md for command reference
+4. Check troubleshooting section above
+
+================================================================================
+YOU'RE READY TO DEPLOY!
+================================================================================
+
+1. Make sure all 27 files are downloaded
+2. Open PowerShell in your divorcegame folder
+3. Run: .\DEPLOY_NOW.ps1
+4. Follow the prompts
+5. Your game will be live!
+
+Total time: ~10 minutes
+
+Good luck! 🚀

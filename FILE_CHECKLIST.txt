@@ -1,0 +1,172 @@
+================================================================================
+DIVORCE QUEST - FILE DOWNLOAD CHECKLIST
+================================================================================
+
+Before deploying to GitHub, ensure you have downloaded ALL of these files:
+
+ROOT DIRECTORY FILES (14 files):
+================================================================================
+[ ] index.html                        - Main game interface (11 KB)
+[ ] seed-sample-data.html             - Data seeding utility (13 KB)
+[ ] deploy-to-github.ps1              - PowerShell deployment script (9.7 KB)
+[ ] README.md                         - Main documentation (10.9 KB)
+[ ] GITHUB_NOTES.md                   - Technical documentation (21.4 KB)
+[ ] QUICKSTART.md                     - Quick start guide (5.1 KB)
+[ ] CONTRIBUTING.md                   - Contribution guidelines (6.2 KB)
+[ ] PROJECT_SUMMARY.md                - Project overview (15.5 KB)
+[ ] DEPLOYMENT_INSTRUCTIONS.md        - Deployment guide (11.0 KB)
+[ ] QUICK_REFERENCE.md                - Command reference (6.3 KB)
+[ ] START_HERE.md                     - Getting started (8.6 KB)
+[ ] FILE_CHECKLIST.txt                - This file
+[ ] LICENSE                           - MIT License (1.9 KB)
+[ ] .gitignore                        - Git ignore rules (625 bytes)
+
+CSS FOLDER FILES (1 file):
+================================================================================
+Create folder: css/
+[ ] css/style.css                     - All game styling (13.6 KB)
+
+JS FOLDER FILES (11 files):
+================================================================================
+Create folder: js/
+[ ] js/config.js                      - Configuration (4.3 KB)
+[ ] js/utils.js                       - Utility functions (6.5 KB)
+[ ] js/api.js                         - RESTful API client (7.1 KB)
+[ ] js/bayesian.js                    - Prediction engine (11.1 KB)
+[ ] js/questionnaire.js               - Question system (18.0 KB)
+[ ] js/scenarios.js                   - Scenario management (11.2 KB)
+[ ] js/outcomes.js                    - Results display (16.4 KB)
+[ ] js/content-manager.js             - Content management (11.9 KB)
+[ ] js/idle-manager.js                - Idle timeout handler (4.3 KB)
+[ ] js/game-engine.js                 - Main game controller (18.1 KB)
+[ ] js/main.js                        - Application bootstrap (2.6 KB)
+
+================================================================================
+TOTAL: 26 files
+Total Size: ~190 KB
+================================================================================
+
+FOLDER STRUCTURE:
+================================================================================
+Your folder should look like this:
+
+C:\divorcegame\                       (or your chosen location)
+├── index.html
+├── seed-sample-data.html
+├── deploy-to-github.ps1              ← IMPORTANT: Run this to deploy!
+├── README.md
+├── GITHUB_NOTES.md
+├── QUICKSTART.md
+├── CONTRIBUTING.md
+├── PROJECT_SUMMARY.md
+├── DEPLOYMENT_INSTRUCTIONS.md
+├── QUICK_REFERENCE.md
+├── START_HERE.md                     ← READ THIS FIRST!
+├── FILE_CHECKLIST.txt
+├── LICENSE
+├── .gitignore
+├── css\
+│   └── style.css
+└── js\
+    ├── config.js
+    ├── utils.js
+    ├── api.js
+    ├── bayesian.js
+    ├── questionnaire.js
+    ├── scenarios.js
+    ├── outcomes.js
+    ├── content-manager.js
+    ├── idle-manager.js
+    ├── game-engine.js
+    └── main.js
+
+================================================================================
+VERIFICATION STEPS:
+================================================================================
+
+After downloading all files:
+
+1. [ ] Check folder structure matches above
+2. [ ] Open index.html in browser - game should load
+3. [ ] Verify css/ folder exists with style.css
+4. [ ] Verify js/ folder exists with all 11 .js files
+5. [ ] Verify deploy-to-github.ps1 exists
+6. [ ] Verify all .md documentation files exist
+
+If all checks pass, you're ready to deploy!
+
+================================================================================
+NEXT STEPS:
+================================================================================
+
+1. READ: START_HERE.md (complete deployment guide)
+2. INSTALL: Git (if needed) from https://git-scm.com/download/win
+3. CREATE: GitHub repository at https://github.com/new
+4. RUN: deploy-to-github.ps1 in PowerShell
+5. ENABLE: GitHub Pages in repository settings
+6. DONE: Your game will be live!
+
+================================================================================
+MOST IMPORTANT FILES:
+================================================================================
+
+📖 START_HERE.md                      ← Read this first!
+🚀 deploy-to-github.ps1               ← Run this to deploy!
+📄 index.html                         ← Main game file
+📂 css/style.css                      ← Game styling
+📂 js/*.js                            ← All game logic
+
+================================================================================
+HELP & DOCUMENTATION:
+================================================================================
+
+Getting Started:       START_HERE.md
+Quick Deployment:      QUICK_REFERENCE.md
+Detailed Deployment:   DEPLOYMENT_INSTRUCTIONS.md
+Playing the Game:      QUICKSTART.md
+Technical Details:     GITHUB_NOTES.md
+Contributing:          CONTRIBUTING.md
+Project Overview:      PROJECT_SUMMARY.md
+
+================================================================================
+COMMON MISTAKES TO AVOID:
+================================================================================
+
+❌ Don't put all files in one folder (keep css/ and js/ separate)
+❌ Don't rename files (keep exact names)
+❌ Don't skip the .gitignore file (starts with a dot)
+❌ Don't forget to download deploy-to-github.ps1
+❌ Don't use GitHub password (use Personal Access Token)
+
+✅ Keep folder structure as shown above
+✅ Download ALL 26 files
+✅ Read START_HERE.md before deploying
+✅ Use the PowerShell script for easy deployment
+✅ Generate a Personal Access Token for authentication
+
+================================================================================
+READY TO DEPLOY?
+================================================================================
+
+If all files are downloaded and folder structure is correct:
+
+1. Open PowerShell in your divorcegame folder
+2. Run: .\deploy-to-github.ps1
+3. Follow the prompts
+4. Your game will be live on GitHub Pages!
+
+See START_HERE.md for complete step-by-step instructions.
+
+================================================================================
+QUESTIONS?
+================================================================================
+
+Check these files for answers:
+- START_HERE.md (getting started)
+- DEPLOYMENT_INSTRUCTIONS.md (detailed deployment)
+- QUICK_REFERENCE.md (quick commands)
+- README.md (project documentation)
+
+================================================================================
+Good luck with your deployment! 🚀
+================================================================================

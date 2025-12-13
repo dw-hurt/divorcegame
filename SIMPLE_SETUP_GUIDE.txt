@@ -1,0 +1,254 @@
+================================================================================
+                    DIVORCE QUEST - SIMPLE SETUP GUIDE
+                    Save Files to Desktop - Easy Steps
+================================================================================
+
+WHERE TO SAVE FILES
+================================================================================
+
+RECOMMENDED LOCATION:
+C:\Users\YourUsername\Desktop\divorcegame\
+
+(Replace "YourUsername" with your actual Windows username)
+
+
+STEP 1: CREATE FOLDER ON DESKTOP
+================================================================================
+
+1. Right-click on your Desktop
+2. Click: New → Folder
+3. Name it: divorcegame
+4. Press Enter
+
+You now have: C:\Users\YourUsername\Desktop\divorcegame\
+
+
+STEP 2: CREATE TWO SUBFOLDERS
+================================================================================
+
+Inside the divorcegame folder:
+
+1. Right-click → New → Folder → Name: css
+2. Right-click → New → Folder → Name: js
+
+You now have:
+C:\Users\YourUsername\Desktop\divorcegame\
+├── css\
+└── js\
+
+
+STEP 3: DOWNLOAD FILES TO CORRECT LOCATIONS
+================================================================================
+
+Download 28 files total to 3 locations:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ LOCATION 1: Main divorcegame folder (17 files)                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+Save to: C:\Users\YourUsername\Desktop\divorcegame\
+
+Files:
+  ✓ index.html
+  ✓ seed-sample-data.html
+  ✓ DEPLOY_NOW.ps1                  ← IMPORTANT! Run this to deploy
+  ✓ deploy-to-github.ps1
+  ✓ README.md
+  ✓ GITHUB_NOTES.md
+  ✓ QUICKSTART.md
+  ✓ CONTRIBUTING.md
+  ✓ PROJECT_SUMMARY.md
+  ✓ DEPLOYMENT_INSTRUCTIONS.md
+  ✓ QUICK_REFERENCE.md
+  ✓ START_HERE.md
+  ✓ READY_TO_DEPLOY.md              ← IMPORTANT! Read this
+  ✓ DEPLOY_INSTRUCTIONS.txt
+  ✓ WHERE_TO_SAVE_FILES.md
+  ✓ FILE_CHECKLIST.txt
+  ✓ LICENSE
+  ✓ .gitignore
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ LOCATION 2: css folder (1 file)                                    │
+└─────────────────────────────────────────────────────────────────────┘
+
+Save to: C:\Users\YourUsername\Desktop\divorcegame\css\
+
+Files:
+  ✓ style.css
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ LOCATION 3: js folder (11 files)                                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+Save to: C:\Users\YourUsername\Desktop\divorcegame\js\
+
+Files:
+  ✓ config.js
+  ✓ utils.js
+  ✓ api.js
+  ✓ bayesian.js
+  ✓ questionnaire.js
+  ✓ scenarios.js
+  ✓ outcomes.js
+  ✓ content-manager.js
+  ✓ idle-manager.js
+  ✓ game-engine.js
+  ✓ main.js
+
+
+FINAL FOLDER STRUCTURE
+================================================================================
+
+Your Desktop should have this:
+
+Desktop\
+└── divorcegame\
+    ├── index.html
+    ├── DEPLOY_NOW.ps1              ← Run this!
+    ├── READY_TO_DEPLOY.md          ← Read this!
+    ├── (15 more files...)
+    ├── css\
+    │   └── style.css
+    └── js\
+        ├── config.js
+        ├── utils.js
+        ├── (9 more .js files...)
+        └── main.js
+
+
+HOW TO CHECK IF YOU HAVE EVERYTHING
+================================================================================
+
+1. Open File Explorer
+2. Go to: C:\Users\YourUsername\Desktop\divorcegame
+3. You should see:
+   - About 17 files in the main folder
+   - A "css" folder with 1 file inside
+   - A "js" folder with 11 files inside
+
+Total files: 28
+
+
+AFTER FILES ARE SAVED - DEPLOY TO GITHUB
+================================================================================
+
+STEP 4: OPEN POWERSHELL IN YOUR FOLDER
+────────────────────────────────────────
+
+Method 1 (Easiest):
+  1. Open File Explorer
+  2. Go to your divorcegame folder
+  3. Hold SHIFT and RIGHT-CLICK inside the folder
+  4. Select "Open PowerShell window here"
+
+Method 2:
+  1. Open File Explorer
+  2. Go to your divorcegame folder
+  3. Click in the address bar (top)
+  4. Type: powershell
+  5. Press Enter
+
+
+STEP 5: RUN DEPLOYMENT SCRIPT
+────────────────────────────────────────
+
+In PowerShell, type these commands:
+
+First time only (allow scripts):
+  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+Then deploy:
+  .\DEPLOY_NOW.ps1
+
+
+STEP 6: AUTHENTICATE WITH GITHUB
+────────────────────────────────────────
+
+When prompted:
+  Username: dw-hurt
+  Password: YOUR PERSONAL ACCESS TOKEN (not GitHub password!)
+
+Get token:
+  1. Go to: https://github.com/settings/tokens
+  2. Generate new token → Classic
+  3. Name: Divorce Quest
+  4. Check: repo (all)
+  5. Generate and COPY token
+  6. Paste as password in PowerShell
+
+
+STEP 7: ENABLE GITHUB PAGES
+────────────────────────────────────────
+
+After successful push:
+  1. Go to: https://github.com/dw-hurt/divorcegame/settings/pages
+  2. Source: main branch
+  3. Folder: / (root)
+  4. Click Save
+  5. Wait 1-2 minutes
+
+
+DONE! YOUR GAME IS LIVE!
+────────────────────────────────────────
+
+Visit: https://dw-hurt.github.io/divorcegame/
+
+
+QUICK REFERENCE
+================================================================================
+
+Your Folder:     C:\Users\YourUsername\Desktop\divorcegame\
+Script to Run:   DEPLOY_NOW.ps1
+Guide to Read:   READY_TO_DEPLOY.md
+
+Repository:      https://github.com/dw-hurt/divorcegame
+Live Game:       https://dw-hurt.github.io/divorcegame/
+Get Token:       https://github.com/settings/tokens
+
+
+TROUBLESHOOTING
+================================================================================
+
+Problem: Can't find PowerShell
+Solution: Search "PowerShell" in Windows Start menu
+
+Problem: Script won't run
+Solution: Run this first:
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+Problem: Don't know my username
+Solution: In PowerShell type: echo $env:USERNAME
+
+Problem: Files in wrong place
+Solution: Check this guide - files must be in css/ and js/ folders
+
+Problem: Authentication fails
+Solution: Use Personal Access Token, not GitHub password
+
+
+NEED MORE HELP?
+================================================================================
+
+Read these files in your divorcegame folder:
+  • READY_TO_DEPLOY.md      - Quick deployment guide
+  • WHERE_TO_SAVE_FILES.md  - Detailed file locations
+  • START_HERE.md           - Complete step-by-step
+  • DEPLOY_INSTRUCTIONS.txt - Simple text guide
+
+
+YOU'RE READY!
+================================================================================
+
+If you have:
+  ✓ divorcegame folder on Desktop
+  ✓ css and js subfolders created
+  ✓ 28 files downloaded to correct locations
+  ✓ PowerShell open in divorcegame folder
+
+Then just run:
+  .\DEPLOY_NOW.ps1
+
+Your game will be live in ~10 minutes!
+
+Good luck! 🚀

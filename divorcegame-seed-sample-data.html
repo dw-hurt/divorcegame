@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divorce Quest - Data Seeder</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            border-bottom: 2px solid #0f0;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #0f0;
+        }
+        button {
+            background: #000;
+            color: #0f0;
+            border: 2px solid #0f0;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 10px 10px 10px 0;
+        }
+        button:hover {
+            background: #0f0;
+            color: #000;
+        }
+        #output {
+            background: #001100;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid #0f0;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #0f0;
+        }
+        .error {
+            color: #f00;
+        }
+        .warning {
+            color: #ff0;
+        }
+        .info {
+            color: #0ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌱 Divorce Quest - Sample Data Seeder</h1>
+    
+    <div class="section">
+        <h2>What This Does</h2>
+        <p>This utility seeds sample data into your game database to help you get started quickly.</p>
+        <p>It will create:</p>
+        <ul>
+            <li>State-specific data for California, New York, and Texas</li>
+            <li>Sample custom questions</li>
+            <li>Example dialogue content</li>
+        </ul>
+        <p class="warning">⚠️ Warning: This will add data to your database. Only run this once!</p>
+    </div>
+
+    <div class="section">
+        <h2>Seed Operations</h2>
+        <button onclick="seedStateData()">Seed State Data (3 states)</button>
+        <button onclick="seedCustomQuestions()">Seed Custom Questions (5 questions)</button>
+        <button onclick="seedAll()">Seed All Sample Data</button>
+        <button onclick="clearOutput()">Clear Output</button>
+    </div>
+
+    <div id="output">
+        <p class="info">Ready to seed sample data...</p>
+    </div>
+
+    <script>
+        // Import the config and API modules
+        const script1 = document.createElement('script');
+        script1.src = 'js/config.js';
+        document.head.appendChild(script1);
+
+        const script2 = document.createElement('script');
+        script2.src = 'js/utils.js';
+        document.head.appendChild(script2);
+
+        const script3 = document.createElement('script');
+        script3.src = 'js/api.js';
+        document.head.appendChild(script3);
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `<p class="${type}">[${timestamp}] ${message}</p>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '';
+        }
+
+        async function seedStateData() {
+            log('Starting state data seeding...', 'info');
+
+            const states = [
+                {
+                    id: 'state_ca',
+                    state_code: 'CA',
+                    state_name: 'California',
+                    is_community_property: true,
+                    avg_divorce_duration_days: 210,
+                    filing_fee: 435,
+                    required_separation_days: 180,
+                    custody_default: 'Joint custody preference',
+                    alimony_formula: 'Duration based formula - typically 1/2 marriage length for marriages < 10 years',
+                    documents_required: JSON.stringify([
+                        { category: 'Initial Filing', name: 'FL-100 Petition' },
+                        { category: 'Initial Filing', name: 'FL-110 Summons' },
+                        { category: 'Financial', name: 'FL-150 Income and Expense Declaration' },
+                        { category: 'Final', name: 'FL-180 Judgment' }
+                    ]),
+                    statistical_data: JSON.stringify({
+                        avg_duration_with_children: 240,
+                        avg_duration_without_children: 180,
+                        avg_attorney_fees: 17000
+                    })
+                },
+                {
+                    id: 'state_ny',
+                    state_code: 'NY',
+                    state_name: 'New York',
+                    is_community_property: false,
+                    avg_divorce_duration_days: 270,
+                    filing_fee: 335,
+                    required_separation_days: 0,
+                    custody_default: 'Best interest of child standard',
+                    alimony_formula: 'Equitable distribution - multiple factors considered',
+                    documents_required: JSON.stringify([
+                        { category: 'Initial Filing', name: 'Summons with Notice' },
+                        { category: 'Initial Filing', name: 'Verified Complaint' },
+                        { category: 'Financial', name: 'Statement of Net Worth' },
+                        { category: 'Final', name: 'Judgment of Divorce' }
+                    ]),
+                    statistical_data: JSON.stringify({
+                        avg_duration_with_children: 300,
+                        avg_duration_without_children: 240,
+                        avg_attorney_fees: 15000
+                    })
+                },
+                {
+                    id: 'state_tx',
+                    state_code: 'TX',
+                    state_name: 'Texas',
+                    is_community_property: true,
+                    avg_divorce_duration_days: 180,
+                    filing_fee: 300,
+                    required_separation_days: 60,
+                    custody_default: 'Joint managing conservatorship',
+                    alimony_formula: 'Spousal maintenance - limited duration',
+                    documents_required: JSON.stringify([
+                        { category: 'Initial Filing', name: 'Original Petition for Divorce' },
+                        { category: 'Financial', name: 'Inventory and Appraisement' },
+                        { category: 'Child Related', name: 'Child Support Worksheet' },
+                        { category: 'Final', name: 'Final Decree of Divorce' }
+                    ]),
+                    statistical_data: JSON.stringify({
+                        avg_duration_with_children: 210,
+                        avg_duration_without_children: 150,
+                        avg_attorney_fees: 12000
+                    })
+                }
+            ];
+
+            for (const state of states) {
+                try {
+                    await API.createStateData(state);
+                    log(`✓ Created state data for ${state.state_name}`, 'success');
+                } catch (error) {
+                    log(`✗ Error creating ${state.state_name}: ${error.message}`, 'error');
+                }
+            }
+
+            log('State data seeding complete!', 'success');
+        }
+
+        async function seedCustomQuestions() {
+            log('Starting custom questions seeding...', 'info');
+
+            const questions = [
+                {
+                    id: 'custom_q1',
+                    content_type: 'question',
+                    category: 'emotional',
+                    title: 'future_relationship',
+                    content: 'Do you envision maintaining a friendly relationship with your spouse after divorce?',
+                    metadata: JSON.stringify({
+                        type: 'select',
+                        npcIntro: 'The nature of your future relationship matters...',
+                        options: [
+                            { value: 'yes_friends', label: 'Yes, we can be friends', score: 5 },
+                            { value: 'cordial', label: 'Cordial but distant', score: 3 },
+                            { value: 'no_contact', label: 'Prefer no contact', score: 1 }
+                        ]
+                    }),
+                    active: true,
+                    sort_order: 100
+                },
+                {
+                    id: 'custom_q2',
+                    content_type: 'question',
+                    category: 'factual',
+                    title: 'business_ownership',
+                    content: 'Do you or your spouse own a business?',
+                    metadata: JSON.stringify({
+                        type: 'boolean',
+                        npcIntro: 'Business ownership complicates asset division...'
+                    }),
+                    active: true,
+                    sort_order: 101
+                },
+                {
+                    id: 'custom_q3',
+                    content_type: 'question',
+                    category: 'emotional',
+                    title: 'decision_timeline',
+                    content: 'How long have you been considering divorce?',
+                    metadata: JSON.stringify({
+                        type: 'select',
+                        npcIntro: 'The length of consideration affects readiness...',
+                        options: [
+                            { value: 'less_month', label: 'Less than a month', score: 1 },
+                            { value: '1_6_months', label: '1-6 months', score: 2 },
+                            { value: '6_12_months', label: '6-12 months', score: 3 },
+                            { value: 'over_year', label: 'Over a year', score: 4 },
+                            { value: 'several_years', label: 'Several years', score: 5 }
+                        ]
+                    }),
+                    active: true,
+                    sort_order: 102
+                },
+                {
+                    id: 'custom_q4',
+                    content_type: 'question',
+                    category: 'factual',
+                    title: 'prenuptial_agreement',
+                    content: 'Do you have a prenuptial or postnuptial agreement?',
+                    metadata: JSON.stringify({
+                        type: 'boolean',
+                        npcIntro: 'Agreements made before marriage can significantly affect outcomes...'
+                    }),
+                    active: true,
+                    sort_order: 103
+                },
+                {
+                    id: 'custom_q5',
+                    content_type: 'question',
+                    category: 'emotional',
+                    title: 'counseling_attempted',
+                    content: 'Have you and your spouse tried marriage counseling?',
+                    metadata: JSON.stringify({
+                        type: 'select',
+                        npcIntro: 'Counseling attempts show commitment to resolution...',
+                        options: [
+                            { value: 'yes_helped', label: 'Yes, it helped but not enough', score: 4 },
+                            { value: 'yes_no_help', label: 'Yes, but it did not help', score: 3 },
+                            { value: 'refused', label: 'One of us refused', score: 2 },
+                            { value: 'not_tried', label: 'No, we have not tried', score: 1 }
+                        ]
+                    }),
+                    active: true,
+                    sort_order: 104
+                }
+            ];
+
+            for (const question of questions) {
+                try {
+                    await API.createContent(question);
+                    log(`✓ Created custom question: ${question.title}`, 'success');
+                } catch (error) {
+                    log(`✗ Error creating question ${question.title}: ${error.message}`, 'error');
+                }
+            }
+
+            log('Custom questions seeding complete!', 'success');
+        }
+
+        async function seedAll() {
+            log('Starting full database seed...', 'info');
+            log('═══════════════════════════════════', 'info');
+            
+            await seedStateData();
+            log('───────────────────────────────────', 'info');
+            await seedCustomQuestions();
+            
+            log('═══════════════════════════════════', 'info');
+            log('🎉 All sample data seeded successfully!', 'success');
+            log('You can now close this page and return to the game.', 'info');
+        }
+
+        // Auto-load on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('Data seeder ready. Click a button above to seed sample data.', 'info');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divorce Quest - A Scenario Planning Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Disclaimer Screen -->
+        <div id="disclaimer-screen" class="screen active">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h1 class="title-text blink">⚠️ IMPORTANT DISCLAIMER ⚠️</h1>
+                    <div class="disclaimer-box">
+                        <p class="disclaimer-text">
+                            This is a GAME designed for educational and exploratory purposes only.
+                        </p>
+                        <p class="disclaimer-text">
+                            This game does NOT:
+                        </p>
+                        <ul class="disclaimer-list">
+                            <li>Constitute legal advice</li>
+                            <li>Replace consultation with a qualified attorney</li>
+                            <li>Guarantee any outcomes in real divorce proceedings</li>
+                            <li>Suggest how to execute a divorce</li>
+                            <li>Provide legally binding information</li>
+                        </ul>
+                        <p class="disclaimer-text">
+                            All scenarios, outcomes, and predictions are SIMULATIONS based on statistical models
+                            and may not reflect your specific situation.
+                        </p>
+                        <p class="disclaimer-text">
+                            <strong>Always consult with a licensed attorney in your jurisdiction before making any legal decisions.</strong>
+                        </p>
+                    </div>
+                    <div class="button-container">
+                        <button class="retro-button" id="accept-disclaimer">
+                            I UNDERSTAND - START GAME
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Title Screen -->
+        <div id="title-screen" class="screen">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h1 class="game-title blink">DIVORCE QUEST</h1>
+                    <p class="subtitle">A Scenario Planning Adventure</p>
+                    <div class="title-art">
+                        <pre class="ascii-art">
+    ⚔️  💔  🏰
+    
+   EXPLORE YOUR
+    OPTIONS...
+   
+   ...BEFORE YOU
+     DECIDE
+                        </pre>
+                    </div>
+                    <div class="button-container">
+                        <button class="retro-button" id="new-game-btn">NEW ADVENTURE</button>
+                        <button class="retro-button" id="continue-game-btn">CONTINUE QUEST</button>
+                        <button class="retro-button" id="content-admin-btn">CONTENT EDITOR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Character Creation Screen -->
+        <div id="character-creation-screen" class="screen">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h2 class="screen-title">CREATE YOUR PROFILE</h2>
+                    <div class="dialogue-box">
+                        <p class="npc-text">
+                            Greetings, traveler. Before you embark on this journey, 
+                            I must know more about you...
+                        </p>
+                    </div>
+                    <form id="character-form" class="game-form">
+                        <div class="form-group">
+                            <label>Your Name:</label>
+                            <input type="text" id="player-name" required class="retro-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Email (optional - for saving progress):</label>
+                            <input type="email" id="player-email" class="retro-input">
+                        </div>
+                        <div class="button-container">
+                            <button type="submit" class="retro-button">BEGIN QUEST</button>
+                            <button type="button" class="retro-button secondary" id="back-to-title">BACK</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scenario Selection Screen -->
+        <div id="scenario-selection-screen" class="screen">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h2 class="screen-title">YOUR SCENARIOS</h2>
+                    <div class="dialogue-box">
+                        <p class="npc-text">
+                            You can explore multiple paths. Each scenario represents a different 
+                            journey through the realm of possibilities...
+                        </p>
+                    </div>
+                    <div id="scenario-list" class="scenario-list">
+                        <!-- Scenarios will be loaded here -->
+                    </div>
+                    <div class="button-container">
+                        <button class="retro-button" id="new-scenario-btn">⚔️ NEW SCENARIO</button>
+                        <button class="retro-button secondary" id="logout-btn">EXIT GAME</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questionnaire Screen (Factual) -->
+        <div id="questionnaire-factual-screen" class="screen">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h2 class="screen-title">GATHERING FACTS</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="factual-progress"></div>
+                    </div>
+                    <div id="factual-question-container" class="question-container">
+                        <!-- Questions loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questionnaire Screen (Emotional) -->
+        <div id="questionnaire-emotional-screen" class="screen">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h2 class="screen-title">UNDERSTANDING YOUR HEART</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="emotional-progress"></div>
+                    </div>
+                    <div id="emotional-question-container" class="question-container">
+                        <!-- Questions loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outcome Prediction Screen -->
+        <div id="outcome-screen" class="screen">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h2 class="screen-title">YOUR JOURNEY'S POSSIBLE PATHS</h2>
+                    <div class="dialogue-box">
+                        <p class="npc-text">
+                            The Oracle has spoken! Based on your journey, here are the possible outcomes...
+                        </p>
+                    </div>
+                    <div id="outcome-container" class="outcome-container">
+                        <!-- Outcomes loaded dynamically -->
+                    </div>
+                    <div class="button-container">
+                        <button class="retro-button" id="view-documents-btn">📜 VIEW DOCUMENTS</button>
+                        <button class="retro-button" id="new-scenario-from-outcome-btn">⚔️ NEW SCENARIO</button>
+                        <button class="retro-button secondary" id="back-to-scenarios-btn">SCENARIO LIST</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents Screen -->
+        <div id="documents-screen" class="screen">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h2 class="screen-title">REQUIRED DOCUMENTS</h2>
+                    <div class="dialogue-box">
+                        <p class="npc-text">
+                            These are the scrolls you may need in the realm of <span id="doc-state-name"></span>...
+                        </p>
+                    </div>
+                    <div id="documents-container" class="documents-container">
+                        <!-- Documents loaded dynamically -->
+                    </div>
+                    <div class="button-container">
+                        <button class="retro-button" id="back-to-outcome-btn">BACK TO OUTCOMES</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Management Screen -->
+        <div id="content-management-screen" class="screen">
+            <div class="screen-content">
+                <div class="retro-border">
+                    <h2 class="screen-title">CONTENT EDITOR</h2>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="questions">Questions</button>
+                        <button class="tab-btn" data-tab="dialogue">Dialogue</button>
+                        <button class="tab-btn" data-tab="state-data">State Data</button>
+                        <button class="tab-btn" data-tab="documents">Documents</button>
+                    </div>
+                    <div id="content-editor-area" class="content-editor">
+                        <!-- Content editor loaded dynamically -->
+                    </div>
+                    <div class="button-container">
+                        <button class="retro-button secondary" id="back-to-title-from-content">BACK TO TITLE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Idle Warning Overlay -->
+        <div id="idle-warning" class="overlay hidden">
+            <div class="overlay-content">
+                <h2>⚠️ ARE YOU STILL THERE?</h2>
+                <p>You've been idle for 4 minutes.</p>
+                <p>The game will close in 60 seconds...</p>
+                <button class="retro-button" id="still-here-btn">I'M STILL HERE!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio (optional, muted by default) -->
+    <audio id="game-music" loop>
+        <!-- You can add retro game music here -->
+    </audio>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/bayesian.js"></script>
+    <script src="js/questionnaire.js"></script>
+    <script src="js/scenarios.js"></script>
+    <script src="js/outcomes.js"></script>
+    <script src="js/content-manager.js"></script>
+    <script src="js/idle-manager.js"></script>
+    <script src="js/game-engine.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
