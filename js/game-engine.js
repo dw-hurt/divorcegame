@@ -35,7 +35,7 @@ const GameEngine = {
     setupEventListeners() {
         // Disclaimer screen
         document.getElementById('accept-disclaimer')?.addEventListener('click', () => {
-            this.showScreen(CONFIG.SCREENS.TITLE);
+            this.showScreen(CONFIG.SCREENS.MENU);
         });
         
         // Title screen
@@ -59,7 +59,7 @@ const GameEngine = {
         });
         
         document.getElementById('back-to-title')?.addEventListener('click', () => {
-            this.showScreen(CONFIG.SCREENS.TITLE);
+            this.showScreen(CONFIG.SCREENS.MENU);
         });
         
         // Scenario selection
@@ -91,7 +91,7 @@ const GameEngine = {
         
         // Content management
         document.getElementById('back-to-title-from-content')?.addEventListener('click', () => {
-            this.showScreen(CONFIG.SCREENS.TITLE);
+            this.showScreen(CONFIG.SCREENS.MENU);
         });
     },
     
@@ -506,7 +506,7 @@ const GameEngine = {
     logout() {
         if (confirm('Are you sure you want to exit? Your progress has been saved.')) {
             ScenarioManager.logout();
-            this.showScreen(CONFIG.SCREENS.TITLE);
+            this.showScreen(CONFIG.SCREENS.MENU);
             Utils.showNotification('Logged out successfully', 'success');
         }
     }
