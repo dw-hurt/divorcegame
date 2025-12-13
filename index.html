@@ -3,237 +3,380 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Divorce Quest - A Scenario Planning Game</title>
+    <title>Divorce Quest - Strategic Divorce Scenario Planning</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="game-container">
-        <!-- Disclaimer Screen -->
-        <div id="disclaimer-screen" class="screen active">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h1 class="title-text blink">⚠️ IMPORTANT DISCLAIMER ⚠️</h1>
-                    <div class="disclaimer-box">
-                        <p class="disclaimer-text">
-                            This is a GAME designed for educational and exploratory purposes only.
-                        </p>
-                        <p class="disclaimer-text">
-                            This game does NOT:
-                        </p>
-                        <ul class="disclaimer-list">
-                            <li>Constitute legal advice</li>
-                            <li>Replace consultation with a qualified attorney</li>
-                            <li>Guarantee any outcomes in real divorce proceedings</li>
-                            <li>Suggest how to execute a divorce</li>
-                            <li>Provide legally binding information</li>
-                        </ul>
-                        <p class="disclaimer-text">
-                            All scenarios, outcomes, and predictions are SIMULATIONS based on statistical models
-                            and may not reflect your specific situation.
-                        </p>
-                        <p class="disclaimer-text">
-                            <strong>Always consult with a licensed attorney in your jurisdiction before making any legal decisions.</strong>
-                        </p>
-                    </div>
-                    <div class="button-container">
-                        <button class="retro-button" id="accept-disclaimer">
-                            I UNDERSTAND - START GAME
-                        </button>
-                    </div>
+    <!-- Disclaimer Screen -->
+    <div id="disclaimer-screen" class="screen active">
+        <div class="screen-container">
+            <div class="disclaimer-box">
+                <h1 class="pixel-title">⚠️ IMPORTANT DISCLAIMER ⚠️</h1>
+                <div class="disclaimer-content">
+                    <p class="disclaimer-text">
+                        THIS IS ONLY A GAME. This simulation does not suggest in any way 
+                        how to execute a divorce and does not constitute legal, financial, 
+                        or psychological advice.
+                    </p>
+                    <p class="disclaimer-text">
+                        The outcomes generated are based on statistical models and averages. 
+                        Every divorce case is unique and requires professional consultation.
+                    </p>
+                    <p class="disclaimer-text">
+                        Please consult with qualified attorneys, financial advisors, and 
+                        mental health professionals for real divorce planning.
+                    </p>
+                    <p class="disclaimer-warning">
+                        By clicking "I UNDERSTAND", you acknowledge that this is an 
+                        educational simulation tool only.
+                    </p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Title Screen -->
-        <div id="title-screen" class="screen">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h1 class="game-title blink">DIVORCE QUEST</h1>
-                    <p class="subtitle">A Scenario Planning Adventure</p>
-                    <div class="title-art">
-                        <pre class="ascii-art">
-    ⚔️  💔  🏰
-    
-   EXPLORE YOUR
-    OPTIONS...
-   
-   ...BEFORE YOU
-     DECIDE
-                        </pre>
-                    </div>
-                    <div class="button-container">
-                        <button class="retro-button" id="new-game-btn">NEW ADVENTURE</button>
-                        <button class="retro-button" id="continue-game-btn">CONTINUE QUEST</button>
-                        <button class="retro-button" id="content-admin-btn">CONTENT EDITOR</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Character Creation Screen -->
-        <div id="character-creation-screen" class="screen">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h2 class="screen-title">CREATE YOUR PROFILE</h2>
-                    <div class="dialogue-box">
-                        <p class="npc-text">
-                            Greetings, traveler. Before you embark on this journey, 
-                            I must know more about you...
-                        </p>
-                    </div>
-                    <form id="character-form" class="game-form">
-                        <div class="form-group">
-                            <label>Your Name:</label>
-                            <input type="text" id="player-name" required class="retro-input">
-                        </div>
-                        <div class="form-group">
-                            <label>Email (optional - for saving progress):</label>
-                            <input type="email" id="player-email" class="retro-input">
-                        </div>
-                        <div class="button-container">
-                            <button type="submit" class="retro-button">BEGIN QUEST</button>
-                            <button type="button" class="retro-button secondary" id="back-to-title">BACK</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Scenario Selection Screen -->
-        <div id="scenario-selection-screen" class="screen">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h2 class="screen-title">YOUR SCENARIOS</h2>
-                    <div class="dialogue-box">
-                        <p class="npc-text">
-                            You can explore multiple paths. Each scenario represents a different 
-                            journey through the realm of possibilities...
-                        </p>
-                    </div>
-                    <div id="scenario-list" class="scenario-list">
-                        <!-- Scenarios will be loaded here -->
-                    </div>
-                    <div class="button-container">
-                        <button class="retro-button" id="new-scenario-btn">⚔️ NEW SCENARIO</button>
-                        <button class="retro-button secondary" id="logout-btn">EXIT GAME</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Questionnaire Screen (Factual) -->
-        <div id="questionnaire-factual-screen" class="screen">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h2 class="screen-title">GATHERING FACTS</h2>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="factual-progress"></div>
-                    </div>
-                    <div id="factual-question-container" class="question-container">
-                        <!-- Questions loaded dynamically -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Questionnaire Screen (Emotional) -->
-        <div id="questionnaire-emotional-screen" class="screen">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h2 class="screen-title">UNDERSTANDING YOUR HEART</h2>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="emotional-progress"></div>
-                    </div>
-                    <div id="emotional-question-container" class="question-container">
-                        <!-- Questions loaded dynamically -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Outcome Prediction Screen -->
-        <div id="outcome-screen" class="screen">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h2 class="screen-title">YOUR JOURNEY'S POSSIBLE PATHS</h2>
-                    <div class="dialogue-box">
-                        <p class="npc-text">
-                            The Oracle has spoken! Based on your journey, here are the possible outcomes...
-                        </p>
-                    </div>
-                    <div id="outcome-container" class="outcome-container">
-                        <!-- Outcomes loaded dynamically -->
-                    </div>
-                    <div class="button-container">
-                        <button class="retro-button" id="view-documents-btn">📜 VIEW DOCUMENTS</button>
-                        <button class="retro-button" id="new-scenario-from-outcome-btn">⚔️ NEW SCENARIO</button>
-                        <button class="retro-button secondary" id="back-to-scenarios-btn">SCENARIO LIST</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Documents Screen -->
-        <div id="documents-screen" class="screen">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h2 class="screen-title">REQUIRED DOCUMENTS</h2>
-                    <div class="dialogue-box">
-                        <p class="npc-text">
-                            These are the scrolls you may need in the realm of <span id="doc-state-name"></span>...
-                        </p>
-                    </div>
-                    <div id="documents-container" class="documents-container">
-                        <!-- Documents loaded dynamically -->
-                    </div>
-                    <div class="button-container">
-                        <button class="retro-button" id="back-to-outcome-btn">BACK TO OUTCOMES</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Content Management Screen -->
-        <div id="content-management-screen" class="screen">
-            <div class="screen-content">
-                <div class="retro-border">
-                    <h2 class="screen-title">CONTENT EDITOR</h2>
-                    <div class="tabs">
-                        <button class="tab-btn active" data-tab="questions">Questions</button>
-                        <button class="tab-btn" data-tab="dialogue">Dialogue</button>
-                        <button class="tab-btn" data-tab="state-data">State Data</button>
-                        <button class="tab-btn" data-tab="documents">Documents</button>
-                    </div>
-                    <div id="content-editor-area" class="content-editor">
-                        <!-- Content editor loaded dynamically -->
-                    </div>
-                    <div class="button-container">
-                        <button class="retro-button secondary" id="back-to-title-from-content">BACK TO TITLE</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Idle Warning Overlay -->
-        <div id="idle-warning" class="overlay hidden">
-            <div class="overlay-content">
-                <h2>⚠️ ARE YOU STILL THERE?</h2>
-                <p>You've been idle for 4 minutes.</p>
-                <p>The game will close in 60 seconds...</p>
-                <button class="retro-button" id="still-here-btn">I'M STILL HERE!</button>
+                <button id="accept-disclaimer" class="pixel-button primary">I UNDERSTAND - ENTER GAME</button>
             </div>
         </div>
     </div>
 
-    <!-- Audio (optional, muted by default) -->
-    <audio id="game-music" loop>
-        <!-- You can add retro game music here -->
-    </audio>
+    <!-- Main Menu Screen -->
+    <div id="menu-screen" class="screen">
+        <div class="screen-container">
+            <div class="game-header">
+                <h1 class="game-title">DIVORCE QUEST</h1>
+                <p class="game-subtitle">Strategic Divorce Scenario Planning</p>
+                <p class="version">Version 1.1.0 - Enhanced Edition</p>
+            </div>
+            
+            <div class="menu-container">
+                <div class="menu-section">
+                    <h2 class="pixel-heading">Main Menu</h2>
+                    <button id="new-scenario-btn" class="pixel-button primary">🆕 NEW SCENARIO</button>
+                    <button id="load-scenario-btn" class="pixel-button secondary">📂 LOAD SCENARIO</button>
+                    <button id="manage-content-btn" class="pixel-button secondary">⚙️ MANAGE CONTENT</button>
+                    <button id="view-documents-btn" class="pixel-button secondary">📄 STATE DOCUMENTS</button>
+                </div>
 
-    <!-- Scripts -->
+                <div class="stats-panel">
+                    <h3 class="pixel-subheading">Game Stats</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Saved Scenarios:</span>
+                        <span id="scenario-count" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Questions Available:</span>
+                        <span id="question-count" class="stat-value">45</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">States Supported:</span>
+                        <span class="stat-value">50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Character Creation Screen -->
+    <div id="character-screen" class="screen">
+        <div class="screen-container">
+            <div class="game-header">
+                <h2 class="pixel-heading">Create Your Character</h2>
+                <p class="instruction-text">Define your divorce scenario character</p>
+            </div>
+
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="character-name" class="form-label">Character Name:</label>
+                    <input type="text" id="character-name" class="pixel-input" placeholder="Enter your name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="character-gender" class="form-label">Gender:</label>
+                    <select id="character-gender" class="pixel-select" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="non-binary">Non-Binary</option>
+                        <option value="prefer-not-to-say">Prefer Not to Say</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="scenario-state" class="form-label">State:</label>
+                    <select id="scenario-state" class="pixel-select" required>
+                        <option value="">Select State</option>
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CA">California</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NY">New York</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="scenario-zipcode" class="form-label">Zipcode:</label>
+                    <input type="text" id="scenario-zipcode" class="pixel-input" placeholder="Enter zipcode" maxlength="5" pattern="[0-9]{5}" required>
+                </div>
+
+                <div class="button-group">
+                    <button id="start-game-btn" class="pixel-button primary">START QUEST ➜</button>
+                    <button id="back-to-menu-btn" class="pixel-button secondary">⬅ BACK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen (Questions) -->
+    <div id="game-screen" class="screen">
+        <div class="screen-container">
+            <div class="game-header">
+                <h2 id="current-character-name" class="pixel-heading"></h2>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="current-question-num">1</span> / <span id="total-questions">45</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <div class="question-header">
+                    <span id="question-category" class="question-category"></span>
+                </div>
+                <h3 id="question-text" class="question-text"></h3>
+                
+                <div id="question-input-container" class="input-container">
+                    <!-- Dynamic input will be inserted here -->
+                </div>
+
+                <div class="button-group">
+                    <button id="prev-question-btn" class="pixel-button secondary" disabled>⬅ PREVIOUS</button>
+                    <button id="next-question-btn" class="pixel-button primary">NEXT ➜</button>
+                    <button id="finish-game-btn" class="pixel-button success" style="display: none;">✓ FINISH QUEST</button>
+                </div>
+
+                <div class="help-container">
+                    <button id="save-progress-btn" class="pixel-button small secondary">💾 SAVE PROGRESS</button>
+                    <button id="exit-to-menu-btn" class="pixel-button small secondary">🏠 EXIT TO MENU</button>
+                </div>
+            </div>
+
+            <div class="idle-warning" id="idle-warning" style="display: none;">
+                <p>⚠️ Idle timeout warning! Game will close in <span id="idle-countdown">60</span> seconds.</p>
+                <button id="stay-active-btn" class="pixel-button small primary">I'M STILL HERE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="screen">
+        <div class="screen-container">
+            <div class="game-header">
+                <h2 class="pixel-heading">📊 Quest Results</h2>
+                <p class="instruction-text">Bayesian Analysis of Your Divorce Scenario</p>
+            </div>
+
+            <div id="results-container" class="results-container">
+                <!-- Dynamic results will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button id="save-scenario-btn" class="pixel-button primary">💾 SAVE SCENARIO</button>
+                <button id="new-quest-btn" class="pixel-button secondary">🆕 NEW QUEST</button>
+                <button id="back-to-menu-final-btn" class="pixel-button secondary">🏠 MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Scenario Screen -->
+    <div id="load-screen" class="screen">
+        <div class="screen-container">
+            <div class="game-header">
+                <h2 class="pixel-heading">📂 Load Scenario</h2>
+                <p class="instruction-text">Select a saved scenario to review or continue</p>
+            </div>
+
+            <div id="scenarios-list" class="scenarios-list">
+                <!-- Dynamic scenario list will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button id="back-to-menu-load-btn" class="pixel-button secondary">⬅ BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Manager Screen -->
+    <div id="content-manager-screen" class="screen">
+        <div class="screen-container">
+            <div class="game-header">
+                <h2 class="pixel-heading">⚙️ Content Manager</h2>
+                <p class="instruction-text">Add custom questions and manage game content</p>
+            </div>
+
+            <div class="content-tabs">
+                <button class="tab-button active" data-tab="questions">Questions</button>
+                <button class="tab-button" data-tab="documents">Documents</button>
+                <button class="tab-button" data-tab="settings">Settings</button>
+            </div>
+
+            <div id="questions-tab" class="tab-content active">
+                <h3 class="pixel-subheading">Add Custom Question</h3>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label class="form-label">Question Text:</label>
+                        <textarea id="custom-question-text" class="pixel-textarea" rows="3" placeholder="Enter your question"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Question Type:</label>
+                        <select id="custom-question-type" class="pixel-select">
+                            <option value="text">Text Input</option>
+                            <option value="number">Number</option>
+                            <option value="select">Multiple Choice</option>
+                            <option value="scale">Scale (1-10)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Category:</label>
+                        <select id="custom-question-category" class="pixel-select">
+                            <option value="factual">Factual</option>
+                            <option value="emotional">Emotional</option>
+                            <option value="financial">Financial</option>
+                            <option value="legal">Legal</option>
+                        </select>
+                    </div>
+
+                    <button id="add-question-btn" class="pixel-button primary">➕ ADD QUESTION</button>
+                </div>
+
+                <h3 class="pixel-subheading">Custom Questions List</h3>
+                <div id="custom-questions-list" class="custom-content-list">
+                    <!-- Dynamic list will be inserted here -->
+                </div>
+            </div>
+
+            <div id="documents-tab" class="tab-content">
+                <h3 class="pixel-subheading">State Documents Database</h3>
+                <p class="instruction-text">View standard divorce documents by state</p>
+                <div class="form-group">
+                    <label class="form-label">Select State:</label>
+                    <select id="documents-state-select" class="pixel-select">
+                        <option value="">Select a state</option>
+                        <option value="CA">California</option>
+                        <option value="NY">New York</option>
+                        <option value="TX">Texas</option>
+                        <option value="FL">Florida</option>
+                        <!-- More states would be added -->
+                    </select>
+                </div>
+                <div id="documents-list" class="documents-list">
+                    <!-- Dynamic documents will be inserted here -->
+                </div>
+            </div>
+
+            <div id="settings-tab" class="tab-content">
+                <h3 class="pixel-subheading">Game Settings</h3>
+                <div class="form-container">
+                    <div class="form-group">
+                        <label class="form-label">Idle Timeout (minutes):</label>
+                        <input type="number" id="idle-timeout-setting" class="pixel-input" value="5" min="1" max="30">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Auto-save:</label>
+                        <select id="auto-save-setting" class="pixel-select">
+                            <option value="enabled">Enabled</option>
+                            <option value="disabled">Disabled</option>
+                        </select>
+                    </div>
+                    <button id="save-settings-btn" class="pixel-button primary">💾 SAVE SETTINGS</button>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="back-to-menu-content-btn" class="pixel-button secondary">⬅ BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- State Documents Screen -->
+    <div id="documents-screen" class="screen">
+        <div class="screen-container">
+            <div class="game-header">
+                <h2 class="pixel-heading">📄 State Divorce Documents</h2>
+                <p class="instruction-text">Standard documents required for divorce by state</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Select State:</label>
+                <select id="state-documents-select" class="pixel-select">
+                    <option value="">Select a state</option>
+                </select>
+            </div>
+
+            <div id="state-documents-container" class="documents-container">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button id="back-to-menu-docs-btn" class="pixel-button secondary">⬅ BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading...</p>
+    </div>
+
+    <!-- JavaScript Files -->
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/api.js"></script>
