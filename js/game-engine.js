@@ -63,8 +63,9 @@ const GameEngine = {
         });
         
         // Scenario selection
-        document.getElementById('new-scenario-btn')?.addEventListener('click', () => {
-            this.createNewScenario();
+       document.getElementById('new-scenario-btn')?.addEventListener('click', () => {
+	   this.startNewGame();  // ← CHANGE THIS LINE});
+
         });
         
         document.getElementById('logout-btn')?.addEventListener('click', () => {
@@ -117,7 +118,7 @@ const GameEngine = {
      * Start new game
      */
     startNewGame() {
-        this.showScreen(CONFIG.SCREENS.CHARACTER_CREATION);
+        this.showScreen(CONFIG.SCREENS.CHARACTER);
     },
     
     /**

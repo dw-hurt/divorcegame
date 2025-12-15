@@ -1,0 +1,61 @@
+INTEGRATION GUIDE - New Files Created
+Generated: 2025-12-15 08:41:23
+============================================================
+
+NEW FILES CREATED:
+✅ constants.js - Game constants and configuration
+✅ utils.js - Utility functions and error handling
+
+CHANGES MADE:
+✅ Converted 'var' to 'let' in all JS files
+✅ Created safe localStorage wrapper
+✅ Added helper functions (debounce, clamp, formatCurrency)
+
+HOW TO INTEGRATE:
+
+1. Add to your HTML file (index.html or similar):
+   
+   <!-- Add these BEFORE your existing scripts -->
+   <script src="js/constants.js"></script>
+   <script src="js/utils.js"></script>
+   <script src="js/game-engine.js"></script>
+   <script src="js/scenarios.js"></script>
+   <script src="js/idle-manager.js"></script>
+
+2. Update your game code to use the new utilities:
+
+   // OLD CODE:
+   localStorage.setItem('saveGame', JSON.stringify(gameData));
+   
+   // NEW CODE:
+   const storage = safeLocalStorage();
+   storage.setItem('saveGame', JSON.stringify(gameData));
+
+3. Use constants instead of magic strings:
+
+   // OLD CODE:
+   if (gameState === 'CHARACTER') { ... }
+   
+   // NEW CODE:
+   if (gameState === GAME_STATES.CHARACTER) { ... }
+
+4. Use the helper functions:
+
+   // Clamp stat values:
+   health = clamp(health, GAME_MECHANICS.MIN_STAT, GAME_MECHANICS.MAX_STAT);
+   
+   // Format money:
+   document.getElementById('money').textContent = formatCurrency(playerMoney);
+   
+   // Debounce input:
+   const debouncedSave = debounce(saveGame, UI_CONFIG.DEBOUNCE_DELAY);
+
+NEXT STEPS:
+☐ Update your HTML to include constants.js and utils.js
+☐ Replace localStorage calls with safeLocalStorage()
+☐ Replace magic strings with GAME_STATES constants
+☐ Test thoroughly in normal and private browsing modes
+☐ Gradually convert 'let' to 'const' where values don't change
+
+BACKUP LOCATION:
+C:\Users\user\Documents\divorcegame\js\backup_improvements_20251215_084123
