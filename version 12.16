@@ -1,0 +1,869 @@
+"""
+Divorce Quest - Turn-Based Decision Game with Bayesian Probability
+A comprehensive divorce simulation using questionnaires and adaptive AI
+"""
+
+import json
+import os
+from datetime import datetime
+from typing import Dict, List, Tuple, Optional
+from dataclasses import dataclass, asdict
+from enum import Enum
+import random
+
+
+# ============================================================
+# CONFIGURATION & ENUMS
+# ============================================================
+
+class DivorceStage(Enum):
+    """Stages of the divorce process"""
+    INITIAL_DECISION = "initial_decision"
+    ASSET_DISCOVERY = "asset_discovery"
+    NEGOTIATION = "negotiation"
+    CUSTODY = "custody"
+    LEGAL_PROCESS = "legal_process"
+    SETTLEMENT = "settlement"
+    POST_DIVORCE = "post_divorce"
+
+
+class PersonaTrait(Enum):
+    """Player personality traits affecting outcomes"""
+    COLLABORATIVE = "collaborative"
+    COMPETITIVE = "competitive"
+    AVOIDANT = "avoidant"
+    EMOTIONAL = "emotional"
+    RATIONAL = "rational"
+
+
+# ============================================================
+# DATA CLASSES
+# ============================================================
+
+@dataclass
+class PlayerStats:
+    """Player statistics"""
+    emotional_wellbeing: int = 50  # 0-100
+    financial_security: int = 50   # 0-100
+    legal_advantage: int = 50      # 0-100
+    relationship_quality: int = 50  # 0-100
+    stress_level: int = 50         # 0-100 (lower is better)
+    
+    def apply_changes(self, changes: Dict[str, int]) -> None:
+        """Apply stat changes with bounds checking"""
+        for stat, change in changes.items():
+            if hasattr(self, stat):
+                current = getattr(self, stat)
+                new_value = max(0, min(100, current + change))
+                setattr(self, stat, new_value)
+    
+    def get_overall_score(self) -> float:
+        """Calculate overall success score"""
+        return (
+            self.emotional_wellbeing * 0.3 +
+            self.financial_security * 0.25 +
+            self.legal_advantage * 0.2 +
+            self.relationship_quality * 0.15 +
+            (100 - self.stress_level) * 0.1
+        )
+
+
+@dataclass
+class PlayerPersona:
+    """Player personality profile built from questionnaire"""
+    primary_trait: PersonaTrait
+    secondary_trait: PersonaTrait
+    priorities: Dict[str, int]  # What matters most: money, kids, peace, etc.
+    risk_tolerance: int  # 0-100
+    cooperation_score: int  # 0-100
+    
+    def get_decision_modifier(self, decision_type: str) -> float:
+        """Get personality modifier for decision outcomes"""
+        modifiers = {
+            PersonaTrait.COLLABORATIVE: {
+                'negotiation': 1.2,
+                'mediation': 1.3,
+                'communication': 1.25
+            },
+            PersonaTrait.COMPETITIVE: {
+                'litigation': 1.2,
+                'asset_fight': 1.15,
+                'aggressive_stance': 1.25
+            },
+            PersonaTrait.RATIONAL: {
+                'planning': 1.3,
+                'financial_analysis': 1.25,
+                'strategic': 1.2
+            }
+        }
+        return modifiers.get(self.primary_trait, {}).get(decision_type, 1.0)
+
+
+@dataclass
+class Question:
+    """Questionnaire question"""
+    id: str
+    text: str
+    options: List[Dict[str, any]]  # [{'text': '...', 'traits': {...}, 'priority': '...'}]
+    category: str
+
+
+@dataclass
+class Scenario:
+    """Game scenario/situation"""
+    id: str
+    stage: DivorceStage
+    title: str
+    description: str
+    context: str  # Additional background info
+    choices: List[Dict[str, any]]
+    prerequisites: Dict[str, int] = None  # Required stats to unlock
+    
+    def is_available(self, stats: PlayerStats) -> bool:
+        """Check if scenario is available based on stats"""
+        if not self.prerequisites:
+            return True
+        for stat, min_value in self.prerequisites.items():
+            if getattr(stats, stat, 0) < min_value:
+                return False
+        return True
+
+
+@dataclass
+class GameState:
+    """Complete game state"""
+    player_name: str
+    persona: PlayerPersona
+    stats: PlayerStats
+    current_stage: DivorceStage
+    completed_scenarios: List[str]
+    turn_number: int
+    history: List[Dict]
+    
+    def save_to_file(self, filename: str) -> None:
+        """Save game state to JSON file"""
+        data = {
+            'player_name': self.player_name,
+            'persona': {
+                'primary_trait': self.persona.primary_trait.value,
+                'secondary_trait': self.persona.secondary_trait.value,
+                'priorities': self.persona.priorities,
+                'risk_tolerance': self.persona.risk_tolerance,
+                'cooperation_score': self.persona.cooperation_score
+            },
+            'stats': asdict(self.stats),
+            'current_stage': self.current_stage.value,
+            'completed_scenarios': self.completed_scenarios,
+            'turn_number': self.turn_number,
+            'history': self.history,
+            'saved_at': datetime.now().isoformat()
+        }
+        
+        os.makedirs('saves', exist_ok=True)
+        with open(f'saves/{filename}', 'w') as f:
+            json.dump(data, f, indent=2)
+    
+    @staticmethod
+    def load_from_file(filename: str) -> 'GameState':
+        """Load game state from JSON file"""
+        with open(f'saves/{filename}', 'r') as f:
+            data = json.load(f)
+        
+        persona = PlayerPersona(
+            primary_trait=PersonaTrait(data['persona']['primary_trait']),
+            secondary_trait=PersonaTrait(data['persona']['secondary_trait']),
+            priorities=data['persona']['priorities'],
+            risk_tolerance=data['persona']['risk_tolerance'],
+            cooperation_score=data['persona']['cooperation_score']
+        )
+        
+        stats = PlayerStats(**data['stats'])
+        
+        return GameState(
+            player_name=data['player_name'],
+            persona=persona,
+            stats=stats,
+            current_stage=DivorceStage(data['current_stage']),
+            completed_scenarios=data['completed_scenarios'],
+            turn_number=data['turn_number'],
+            history=data['history']
+        )
+
+
+# ============================================================
+# BAYESIAN PROBABILITY ENGINE
+# ============================================================
+
+class BayesianPredictor:
+    """Predicts outcomes using Bayesian probability based on player choices"""
+    
+    def __init__(self):
+        # Prior probabilities for outcomes
+        self.priors = {
+            'amicable_settlement': 0.3,
+            'contested_divorce': 0.4,
+            'high_conflict': 0.2,
+            'mediated_success': 0.1
+        }
+        
+        # Likelihood of traits leading to outcomes
+        self.likelihoods = {
+            PersonaTrait.COLLABORATIVE: {
+                'amicable_settlement': 0.7,
+                'mediated_success': 0.8,
+                'contested_divorce': 0.2,
+                'high_conflict': 0.1
+            },
+            PersonaTrait.COMPETITIVE: {
+                'amicable_settlement': 0.2,
+                'mediated_success': 0.1,
+                'contested_divorce': 0.6,
+                'high_conflict': 0.5
+            },
+            PersonaTrait.RATIONAL: {
+                'amicable_settlement': 0.5,
+                'mediated_success': 0.6,
+                'contested_divorce': 0.3,
+                'high_conflict': 0.2
+            }
+        }
+    
+    def predict_outcome(self, persona: PlayerPersona, stats: PlayerStats) -> Dict[str, float]:
+        """Calculate probability distribution for outcomes"""
+        outcomes = {}
+        
+        for outcome in self.priors.keys():
+            # Bayesian update: P(outcome|evidence) ∝ P(evidence|outcome) * P(outcome)
+            prior = self.priors[outcome]
+            likelihood = self.likelihoods[persona.primary_trait][outcome]
+            
+            # Adjust based on stats
+            stat_modifier = 1.0
+            if outcome == 'amicable_settlement':
+                stat_modifier = (stats.relationship_quality / 100) * 1.5
+            elif outcome == 'high_conflict':
+                stat_modifier = (stats.stress_level / 100) * 1.5
+            
+            # Adjust based on cooperation score
+            if outcome in ['amicable_settlement', 'mediated_success']:
+                stat_modifier *= (persona.cooperation_score / 100 + 0.5)
+            
+            outcomes[outcome] = prior * likelihood * stat_modifier
+        
+        # Normalize to sum to 1
+        total = sum(outcomes.values())
+        return {k: v/total for k, v in outcomes.items()}
+    
+    def recommend_action(self, persona: PlayerPersona, stats: PlayerStats, 
+                        available_choices: List[Dict]) -> Tuple[Dict, float]:
+        """Recommend best action based on predicted outcomes"""
+        best_choice = None
+        best_score = -1
+        
+        for choice in available_choices:
+            # Simulate applying this choice
+            temp_stats = PlayerStats(**asdict(stats))
+            temp_stats.apply_changes(choice.get('stat_changes', {}))
+            
+            # Predict outcomes with this choice
+            outcomes = self.predict_outcome(persona, temp_stats)
+            
+            # Score based on positive outcomes
+            score = (
+                outcomes.get('amicable_settlement', 0) * 1.0 +
+                outcomes.get('mediated_success', 0) * 0.9 -
+                outcomes.get('high_conflict', 0) * 0.5
+            )
+            
+            # Apply persona modifier
+            if choice.get('type'):
+                score *= persona.get_decision_modifier(choice['type'])
+            
+            if score > best_score:
+                best_score = score
+                best_choice = choice
+        
+        return best_choice, best_score
+
+
+# ============================================================
+# QUESTIONNAIRE SYSTEM
+# ============================================================
+
+class QuestionnaireSystem:
+    """Initial questionnaire to build player persona"""
+    
+    def __init__(self):
+        self.questions = [
+            Question(
+                id="q1",
+                text="What is your primary goal in this divorce?",
+                category="priorities",
+                options=[
+                    {
+                        'text': "Maintain a civil relationship with my ex-partner",
+                        'traits': {PersonaTrait.COLLABORATIVE: 3, PersonaTrait.EMOTIONAL: 1},
+                        'priority': 'relationship',
+                        'cooperation': 30
+                    },
+                    {
+                        'text': "Get the best financial outcome possible",
+                        'traits': {PersonaTrait.COMPETITIVE: 3, PersonaTrait.RATIONAL: 2},
+                        'priority': 'financial',
+                        'cooperation': -20
+                    },
+                    {
+                        'text': "Protect my children's wellbeing above all",
+                        'traits': {PersonaTrait.EMOTIONAL: 3, PersonaTrait.RATIONAL: 1},
+                        'priority': 'children',
+                        'cooperation': 10
+                    },
+                    {
+                        'text': "End this as quickly and painlessly as possible",
+                        'traits': {PersonaTrait.AVOIDANT: 3, PersonaTrait.RATIONAL: 1},
+                        'priority': 'speed',
+                        'cooperation': 5
+                    }
+                ]
+            ),
+            Question(
+                id="q2",
+                text="When facing a difficult negotiation, you typically:",
+                category="approach",
+                options=[
+                    {
+                        'text': "Seek compromise and win-win solutions",
+                        'traits': {PersonaTrait.COLLABORATIVE: 3, PersonaTrait.RATIONAL: 1},
+                        'cooperation': 25
+                    },
+                    {
+                        'text': "Stand firm on what you believe you deserve",
+                        'traits': {PersonaTrait.COMPETITIVE: 3},
+                        'cooperation': -15
+                    },
+                    {
+                        'text': "Try to avoid confrontation if possible",
+                        'traits': {PersonaTrait.AVOIDANT: 3},
+                        'cooperation': -5
+                    },
+                    {
+                        'text': "Analyze all options logically before deciding",
+                        'traits': {PersonaTrait.RATIONAL: 3},
+                        'cooperation': 10
+                    }
+                ]
+            ),
+            Question(
+                id="q3",
+                text="How do you handle highly emotional situations?",
+                category="emotional",
+                options=[
+                    {
+                        'text': "I try to stay calm and think rationally",
+                        'traits': {PersonaTrait.RATIONAL: 3, PersonaTrait.AVOIDANT: 1},
+                        'risk_tolerance': 20
+                    },
+                    {
+                        'text': "I express my feelings openly and honestly",
+                        'traits': {PersonaTrait.EMOTIONAL: 3, PersonaTrait.COLLABORATIVE: 1},
+                        'risk_tolerance': 10
+                    },
+                    {
+                        'text': "I channel emotions into determination",
+                        'traits': {PersonaTrait.COMPETITIVE: 2, PersonaTrait.EMOTIONAL: 1},
+                        'risk_tolerance': 30
+                    },
+                    {
+                        'text': "I need time alone to process my feelings",
+                        'traits': {PersonaTrait.AVOIDANT: 3},
+                        'risk_tolerance': -10
+                    }
+                ]
+            ),
+            Question(
+                id="q4",
+                text="Regarding financial matters in the divorce:",
+                category="financial",
+                options=[
+                    {
+                        'text': "I'll fight for every dollar I'm entitled to",
+                        'traits': {PersonaTrait.COMPETITIVE: 3},
+                        'priority': 'financial',
+                        'risk_tolerance': 25
+                    },
+                    {
+                        'text': "Fair is fair - I want an equitable split",
+                        'traits': {PersonaTrait.RATIONAL: 2, PersonaTrait.COLLABORATIVE: 2},
+                        'priority': 'fairness',
+                        'cooperation': 20
+                    },
+                    {
+                        'text': "I'm willing to be flexible for peace of mind",
+                        'traits': {PersonaTrait.COLLABORATIVE: 2, PersonaTrait.AVOIDANT: 1},
+                        'priority': 'peace',
+                        'cooperation': 25
+                    },
+                    {
+                        'text': "I'll take less just to end this quickly",
+                        'traits': {PersonaTrait.AVOIDANT: 3},
+                        'priority': 'speed',
+                        'cooperation': 5
+                    }
+                ]
+            ),
+            Question(
+                id="q5",
+                text="Your preferred approach to resolving the divorce:",
+                category="resolution",
+                options=[
+                    {
+                        'text': "Mediation - working together with a neutral party",
+                        'traits': {PersonaTrait.COLLABORATIVE: 3, PersonaTrait.RATIONAL: 1},
+                        'cooperation': 35
+                    },
+                    {
+                        'text': "Litigation - let the courts decide fairly",
+                        'traits': {PersonaTrait.COMPETITIVE: 2, PersonaTrait.RATIONAL: 2},
+                        'cooperation': -20
+                    },
+                    {
+                        'text': "Collaborative divorce with both attorneys present",
+                        'traits': {PersonaTrait.COLLABORATIVE: 2, PersonaTrait.RATIONAL: 2},
+                        'cooperation': 20
+                    },
+                    {
+                        'text': "Quick settlement - just get it done",
+                        'traits': {PersonaTrait.AVOIDANT: 3},
+                        'cooperation': 0
+                    }
+                ]
+            )
+        ]
+    
+    def run_questionnaire(self) -> PlayerPersona:
+        """Run the questionnaire and build persona"""
+        print("\n" + "="*60)
+        print("DIVORCE QUEST - PERSONALITY ASSESSMENT")
+        print("="*60)
+        print("\nAnswer these questions to help us understand your approach.")
+        print("Your answers will shape your journey through the divorce process.\n")
+        
+        trait_scores = {trait: 0 for trait in PersonaTrait}
+        priorities = {}
+        total_cooperation = 50  # Start neutral
+        total_risk = 50
+        
+        for i, question in enumerate(self.questions, 1):
+            print(f"\nQuestion {i}/{len(self.questions)}:")
+            print(f"{question.text}\n")
+            
+            for j, option in enumerate(question.options, 1):
+                print(f"  {j}. {option['text']}")
+            
+            while True:
+                try:
+                    choice = int(input("\nYour choice (1-4): ")) - 1
+                    if 0 <= choice < len(question.options):
+                        break
+                    print("Invalid choice. Please enter 1-4.")
+                except ValueError:
+                    print("Please enter a number.")
+            
+            selected = question.options[choice]
+            
+            # Update trait scores
+            for trait, score in selected['traits'].items():
+                trait_scores[trait] += score
+            
+            # Update priorities
+            if 'priority' in selected:
+                priorities[selected['priority']] = priorities.get(selected['priority'], 0) + 1
+            
+            # Update cooperation and risk
+            total_cooperation += selected.get('cooperation', 0)
+            total_risk += selected.get('risk_tolerance', 0)
+        
+        # Determine primary and secondary traits
+        sorted_traits = sorted(trait_scores.items(), key=lambda x: x[1], reverse=True)
+        primary_trait = sorted_traits[0][0]
+        secondary_trait = sorted_traits[1][0]
+        
+        # Normalize cooperation and risk
+        cooperation_score = max(0, min(100, total_cooperation))
+        risk_tolerance = max(0, min(100, total_risk))
+        
+        persona = PlayerPersona(
+            primary_trait=primary_trait,
+            secondary_trait=secondary_trait,
+            priorities=priorities,
+            risk_tolerance=risk_tolerance,
+            cooperation_score=cooperation_score
+        )
+        
+        self._display_persona_results(persona)
+        
+        return persona
+    
+    def _display_persona_results(self, persona: PlayerPersona):
+        """Display persona analysis results"""
+        print("\n" + "="*60)
+        print("PERSONALITY PROFILE")
+        print("="*60)
+        
+        trait_descriptions = {
+            PersonaTrait.COLLABORATIVE: "You value cooperation and mutual benefit",
+            PersonaTrait.COMPETITIVE: "You're determined to achieve the best outcome",
+            PersonaTrait.RATIONAL: "You approach decisions logically and analytically",
+            PersonaTrait.EMOTIONAL: "You're in touch with your feelings and express them",
+            PersonaTrait.AVOIDANT: "You prefer to minimize conflict and move forward"
+        }
+        
+        print(f"\nPrimary Style: {persona.primary_trait.value.upper()}")
+        print(f"  → {trait_descriptions[persona.primary_trait]}")
+        print(f"\nSecondary Style: {persona.secondary_trait.value.upper()}")
+        print(f"  → {trait_descriptions[persona.secondary_trait]}")
+        
+        print(f"\nCooperation Level: {persona.cooperation_score}/100")
+        print(f"Risk Tolerance: {persona.risk_tolerance}/100")
+        
+        if persona.priorities:
+            print("\nYour Priorities:")
+            sorted_priorities = sorted(persona.priorities.items(), 
+                                     key=lambda x: x[1], reverse=True)
+            for priority, score in sorted_priorities:
+                print(f"  • {priority.capitalize()}: {'⭐' * score}")
+        
+        print("\nThis profile will influence your journey and outcomes.")
+        input("\nPress Enter to continue...")
+
+
+# ============================================================
+# SCENARIO DATABASE
+# ============================================================
+
+class ScenarioDatabase:
+    """Database of all game scenarios"""
+    
+    def __init__(self):
+        self.scenarios = self._create_scenarios()
+    
+    def _create_scenarios(self) -> Dict[str, Scenario]:
+        """Create all game scenarios"""
+        scenarios = {}
+        
+        # Stage 1: Initial Decision
+        scenarios['initial_01'] = Scenario(
+            id='initial_01',
+            stage=DivorceStage.INITIAL_DECISION,
+            title="The Decision to Divorce",
+            description="You've decided to pursue divorce. How will you approach this conversation?",
+            context="This initial conversation sets the tone for everything that follows.",
+            choices=[
+                {
+                    'text': "Have an honest, calm conversation about separating amicably",
+                    'type': 'communication',
+                    'stat_changes': {
+                        'emotional_wellbeing': 5,
+                        'relationship_quality': 15,
+                        'stress_level': -10
+                    }
+                },
+                {
+                    'text': "Consult a lawyer first, then inform your spouse",
+                    'type': 'strategic',
+                    'stat_changes': {
+                        'legal_advantage': 20,
+                        'relationship_quality': -10,
+                        'financial_security': 5
+                    }
+                },
+                {
+                    'text': "Suggest counseling as a last attempt before divorce",
+                    'type': 'mediation',
+                    'stat_changes': {
+                        'emotional_wellbeing': 10,
+                        'relationship_quality': 10,
+                        'stress_level': 5
+                    }
+                },
+                {
+                    'text': "Send a formal letter through an attorney",
+                    'type': 'aggressive_stance',
+                    'stat_changes': {
+                        'legal_advantage': 15,
+                        'relationship_quality': -20,
+                        'stress_level': 10
+                    }
+                }
+            ]
+        )
+        
+        # Stage 2: Asset Discovery
+        scenarios['asset_01'] = Scenario(
+            id='asset_01',
+            stage=DivorceStage.ASSET_DISCOVERY,
+            title="Financial Disclosure",
+            description="You need to disclose all assets. You discover your spouse has a hidden savings account.",
+            context="Transparency is legally required, but how you handle this discovery matters.",
+            choices=[
+                {
+                    'text': "Bring it up directly and ask for honesty going forward",
+                    'type': 'communication',
+                    'stat_changes': {
+                        'relationship_quality': 10,
+                        'emotional_wellbeing': 5,
+                        'legal_advantage': 5
+                    }
+                },
+                {
+                    'text': "Document it and report to your attorney immediately",
+                    'type': 'strategic',
+                    'stat_changes': {
+                        'legal_advantage': 20,
+                        'financial_security': 10,
+                        'relationship_quality': -15
+                    }
+                },
+                {
+                    'text': "Hire a forensic accountant to investigate further",
+                    'type': 'aggressive_stance',
+                    'stat_changes': {
+                        'legal_advantage': 25,
+                        'financial_security': 15,
+                        'relationship_quality': -25,
+                        'stress_level': 15
+                    }
+                },
+                {
+                    'text': "Overlook it to avoid conflict",
+                    'type': 'avoidance',
+                    'stat_changes': {
+                        'financial_security': -15,
+                        'stress_level': -5,
+                        'relationship_quality': 5
+                    }
+                }
+            ]
+        )
+        
+        # Stage 3: Negotiation
+        scenarios['negotiate_01'] = Scenario(
+            id='negotiate_01',
+            stage=DivorceStage.NEGOTIATION,
+            title="Property Division",
+            description="You must decide how to divide the family home worth $500,000.",
+            context="The house has significant equity. Both parties want it.",
+            choices=[
+                {
+                    'text': "Propose selling it and splitting proceeds 50/50",
+                    'type': 'negotiation',
+                    'stat_changes': {
+                        'financial_security': 10,
+                        'relationship_quality': 15,
+                        'emotional_wellbeing': -5
+                    }
+                },
+                {
+                    'text': "Offer to buy out their share over time",
+                    'type': 'planning',
+                    'stat_changes': {
+                        'financial_security': 5,
+                        'stress_level': 10,
+                        'emotional_wellbeing': 10
+                    }
+                },
+                {
+                    'text': "Demand the house citing your children's need for stability",
+                    'type': 'asset_fight',
+                    'stat_changes': {
+                        'legal_advantage': 10,
+                        'relationship_quality': -20,
+                        'stress_level': 15
+                    }
+                },
+                {
+                    'text': "Suggest mediation to find a creative solution",
+                    'type': 'mediation',
+                    'stat_changes': {
+                        'emotional_wellbeing': 10,
+                        'relationship_quality': 20,
+                        'stress_level': -10
+                    }
+                }
+            ]
+        )
+        
+        # Stage 4: Custody (if applicable)
+        scenarios['custody_01'] = Scenario(
+            id='custody_01',
+            stage=DivorceStage.CUSTODY,
+            title="Custody Arrangement",
+            description="You need to establish a parenting plan for your two children.",
+            context="The children are 8 and 12 years old. Both parents are capable.",
+            choices=[
+                {
+                    'text': "Propose 50/50 shared custody with alternating weeks",
+                    'type': 'negotiation',
+                    'stat_changes': {
+                        'relationship_quality': 20,
+                        'emotional_wellbeing': 10,
+                        'stress_level': 5
+                    }
+                },
+                {
+                    'text': "Request primary custody with visitation rights for ex",
+                    'type': 'asset_fight',
+                    'stat_changes': {
+                        'legal_advantage': 10,
+                        'relationship_quality': -25,
+                        'stress_level': 20
+                    }
+                },
+                {
+                    'text': "Let the children have input on the arrangement",
+                    'type': 'communication',
+                    'stat_changes': {
+                        'emotional_wellbeing': 15,
+                        'relationship_quality': 15,
+                        'stress_level': -5
+                    }
+                },
+                {
+                    'text': "Hire a child psychologist to recommend best arrangement",
+                    'type': 'planning',
+                    'stat_changes': {
+                        'emotional_wellbeing': 10,
+                        'legal_advantage': 15,
+                        'financial_security': -5
+                    }
+                }
+            ]
+        )
+        
+        # Stage 5: Legal Process
+        scenarios['legal_01'] = Scenario(
+            id='legal_01',
+            stage=DivorceStage.LEGAL_PROCESS,
+            title="Court Appearance",
+            description="Your case is going before a judge. Your attorney suggests a strategy.",
+            context="This hearing could determine the outcome of contested issues.",
+            choices=[
+                {
+                    'text': "Present a reasonable, well-documented case",
+                    'type': 'strategic',
+                    'stat_changes': {
+                        'legal_advantage': 20,
+                        'stress_level': 10,
+                        'financial_security': 10
+                    }
+                },
+                {
+                    'text': "Make a final settlement offer to avoid court",
+                    'type': 'negotiation',
+                    'stat_changes': {
+                        'relationship_quality': 15,
+                        'stress_level': -15,
+                        'legal_advantage': -5
+                    }
+                },
+                {
+                    'text': "Aggressively challenge your ex's claims",
+                    'type': 'litigation',
+                    'stat_changes': {
+                        'legal_advantage': 15,
+                        'relationship_quality': -30,
+                        'stress_level': 25
+                    }
+                },
+                {
+                    'text': "Accept mediation even at this late stage",
+                    'type': 'mediation',
+                    'stat_changes': {
+                        'relationship_quality': 25,
+                        'stress_level': -20,
+                        'emotional_wellbeing': 15
+                    }
+                }
+            ]
+        )
+        
+        # Stage 6: Settlement
+        scenarios['settlement_01'] = Scenario(
+            id='settlement_01',
+            stage=DivorceStage.SETTLEMENT,
+            title="Final Settlement",
+            description="You've reached the settlement phase. Review the final agreement.",
+            context="This is your last chance to negotiate terms before finalization.",
+            choices=[
+                {
+                    'text': "Accept the agreement as fair and move forward",
+                    'type': 'planning',
+                    'stat_changes': {
+                        'emotional_wellbeing': 20,
+                        'stress_level': -25,
+                        'relationship_quality': 15
+                    }
+                },
+                {
+                    'text': "Request one final concession on a key issue",
+                    'type': 'negotiation',
+                    'stat_changes': {
+                        'financial_security': 10,
+                        'legal_advantage': 5,
+                        'relationship_quality': -5
+                    }
+                },
+                {
+                    'text': "Reject it and push for a better deal",
+                    'type': 'asset_fight',
+                    'stat_changes': {
+                        'stress_level': 30,
+                        'relationship_quality': -20,
+                        'legal_advantage': -10
+                    }
+                },
+                {
+                    'text': "Thank your ex for working toward resolution",
+                    'type': 'communication',
+                    'stat_changes': {
+                        'relationship_quality': 25,
+                        'emotional_wellbeing': 15,
+                        'stress_level': -15
+                    }
+                }
+            ]
+        )
+        
+        # Stage 7: Post-Divorce
+        scenarios['post_01'] = Scenario(
+            id='post_01',
+            stage=DivorceStage.POST_DIVORCE,
+            title="Moving Forward",
+            description="The divorce is final. How will you approach your new life?",
+            context="Your decisions now will affect your long-term wellbeing.",
+            choices=[
+                {
+                    'text': "Focus on self-care and rebuilding your life",
+                    'type': 'planning',
+                    'stat_changes': {
+                        'emotional_wellbeing': 25,
+                        'stress_level': -20
+                    }
+                },
+                {
+                    'text': "Maintain a cordial co-parenting relationship",
+                    'type': 'communication',
+                    'stat_changes': {
+                        'relationship_quality': 20,
+                        'emotional_wellbeing': 15
+                    }
+                },
+                {
+                    'text': "Seek therapy to process the experience",
+                    'type': 'planning',
+                    'stat_changes': {
+                        'emotional_wellbeing': 30,
+                        'stress_level': -25,
+                        'financial_security': -5
+                    }
+                },
